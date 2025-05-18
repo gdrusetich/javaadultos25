@@ -63,18 +63,11 @@ public class Main {
                 System.out.println("Ingrese el Id del producto a eliminar");
                 int idProducto = scanner.nextInt();
                 scanner.nextLine();
-               // System.out.println("¿Desea eliminar el Producto detallado?");
-                //RepositorioProducto.getInstancia().buscarProductoPorId(idProducto).mostrarInfo();
-                //System.out.println("Ingrese S para confirmar u otra cosa para cancelar");
-                //String confirmacion = scanner.nextLine();
-                //scanner.nextLine();
-                //if(confirmacion.equals("S")){
                     RepositorioProducto.getInstancia().eliminarProductoPorId(idProducto);
-                //    System.out.println("Se ha eliminado el producto");
-                //}
                 break;
             case 5:
-                Pedido nuevoPedido = new Pedido();
+                RepositorioPedidos.getInstancia().nuevoPedido();
+                break;
             case 7:
                 salir = true;
                 System.out.println("Saliendo del programa...");

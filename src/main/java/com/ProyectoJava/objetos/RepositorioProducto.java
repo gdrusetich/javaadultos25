@@ -49,12 +49,11 @@ public class RepositorioProducto {
 
     public Producto buscarProductoPorId(int id){
         for(Producto p : todosLosProductos){
-            if(p.getId() == id){
+            if(p.getId() == id) {
                 return p;
-            } else {
-                System.out.println("No se encontro el producto con el ID" + id);
             }
         }
+        System.out.println("No se encontro el producto con el ID" + id);
         return null;
     }
 
@@ -67,8 +66,8 @@ public class RepositorioProducto {
         return false;
     }
 
-    public boolean hayStock(String productoSolicitado, int stockSolicitado){
-        Producto productoEncontrado = this.buscarProducto(productoSolicitado);
+    public boolean hayStock(int idProductoSolicitado, int stockSolicitado){
+        Producto productoEncontrado = this.buscarProductoPorId(idProductoSolicitado);
         if(productoEncontrado.getStock() >= stockSolicitado){
             return true;
         } else {

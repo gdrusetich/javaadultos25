@@ -12,12 +12,30 @@ public class Pedido {
 
     Scanner scanner = new Scanner(System.in);
 
-    public void agregarProducto(String nombreProducto, int cantidadPedida){
+    int getIdPedido(){
+        return idPedido;
+    }
+    ArrayList<LineaPedido> getPedido(){
+        return pedido;
+    }
+
+    public void asignarId(){
+        contadorPedidos++;
+        this.idPedido = contadorPedidos;
+    }
+
+    public void agregarProducto(int idProducto, int cantidadPedida){
         RepositorioProducto repositorioProducto = RepositorioProducto.getInstancia();
-        Producto productoPedido = repositorioProducto.buscarProducto(nombreProducto);
-        if(repositorioProducto.hayStock(nombreProducto, cantidadPedida)){
+        Producto productoPedido = repositorioProducto.buscarProductoPorId(idProducto);
+        if(productoPedido == null){
+            System.out.println("No se encontro el producto agregado");
+            return;
+        }
+        String nombreProducto = productoPedido.getNombre();
+        if(repositorioProducto.hayStock(idProducto, cantidadPedida)){
             LineaPedido unaLineaPedido = new LineaPedido(productoPedido, cantidadPedida);
             pedido.add(unaLineaPedido);
+
             System.out.println("Se agregaron " + cantidadPedida + " " + nombreProducto);
         } else {
             System.out.println("Sólo quedan " + productoPedido.getStock() + " " + nombreProducto);
@@ -32,19 +50,20 @@ public class Pedido {
         return costoTotal;
     }
 
+
+
     public void confirmarPedido(){
         for(LineaPedido lp : pedido){
             lp.getProducto().descontarStock(lp.getCantidad());
         }
         contadorPedidos++;
         this.idPedido += contadorPedidos;
-        RepositorioPedido.getInstancia().agregarPedido(this);
+        RepositorioPedidos.getInstancia().agregarPedido(this);
     }
 
     public void mostrarPedido(){
         for(LineaPedido lp : pedido){
-            System.out.println("Producto: " + lp.getProducto().getNombre());
-            System.out.println("Producto: " + lp.getCantidad());
+            System.out.println("Producto: " + lp.getProducto().getNombre() + "Cantidad: " + lp.getCantidad());
         }
         System.out.println("Costo total: " + calcularCosto());
     }
