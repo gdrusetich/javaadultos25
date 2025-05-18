@@ -1,4 +1,7 @@
 package com.ProyectoJava.objetos;
+import excepciones.NoHayStockException;
+import excepciones.ProductoNoExistenteException;
+
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -20,19 +23,22 @@ public class RepositorioPedidos {
         this.todosLosPedidos.add(pedidoConfirmado);
     }
 
-    public Pedido nuevoPedido(){
+    public Pedido nuevoPedido() throws NoHayStockException, ProductoNoExistenteException {
         boolean finPedido = false;
         Pedido nuevoPedido = new Pedido();
         while(finPedido!=true){
-            System.out.println("Ingrese el ID del producto que desea agregar");
+            System.out.println("Ingrese el ID del producto que desea agregar.");
             int idProducto = scanner.nextInt();
             scanner.nextLine();
-            System.out.println("Ingrese la cantidad");
+            System.out.println("Ingrese la cantidad.");
             int cantidad = scanner.nextInt();
             scanner.nextLine();
-
-            nuevoPedido.agregarProducto(idProducto, cantidad);
-
+            try {
+                nuevoPedido.agregarProducto(idProducto, cantidad);
+            }
+            catch(ProductoNoExistenteException e){
+                System.out.println(e.getMessage());
+            }
             System.out.println("Desea otro producto? [si/no]");
             String agregarMasProductos = scanner.nextLine();
             //scanner.nextLine();
@@ -48,19 +54,27 @@ public class RepositorioPedidos {
         if(confirmarPedido.equalsIgnoreCase("no")){
             return null;
         }
-
         confirmarPedido(nuevoPedido);
-
         return nuevoPedido;
     }
 
-
-    public void confirmarPedido(Pedido pedidoAConfirmar){
+    public void confirmarPedido(Pedido pedidoAConfirmar) throws NoHayStockException{
         for(LineaPedido lp : pedidoAConfirmar.getPedido()){
-            lp.getProducto().descontarStock(lp.getCantidad());
-            pedidoAConfirmar.asignarId();
-            RepositorioPedidos.getInstancia().agregarPedido(pedidoAConfirmar);
+            try{
+                lp.getProducto().descontarStock(lp.getCantidad());
+                pedidoAConfirmar.asignarIdPedido();
+            }
+            catch(NoHayStockException e){
+                e.getMessage();
+            }
         }
+        pedidoAConfirmar.asignarId();
+        RepositorioPedidos.getInstancia().agregarPedido(pedidoAConfirmar);
     }
 
+    public void mostrarTodosLosPedidos(){
+        for(Pedido pedido: todosLosPedidos){
+            pedido.mostrarPedido();
+        }
+    }
 }

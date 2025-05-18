@@ -1,5 +1,7 @@
 package com.ProyectoJava.objetos;
 
+import excepciones.NoHayStockException;
+
 public class Producto {
     public Producto(String unNombre, double unPrecio, int unStock){
         contadorProductos++;
@@ -16,7 +18,10 @@ public class Producto {
     private double  precio;
     private int stock;
 
-    public void descontarStock(int cantidad){
+    public void descontarStock(int cantidad) throws NoHayStockException {
+        if(this.getStock()<cantidad){
+            throw new NoHayStockException("No hay stock de: "+ this.getNombre());
+        }
         this.stock -=cantidad;
     }
 
@@ -37,6 +42,7 @@ public class Producto {
         System.out.println("Nombre: " + this.nombre);
         System.out.println("Precio: " + this.precio);
         System.out.println("Stock: " + this.stock);
+        System.out.println("__________________");
     }
 
     double precioConDescuento(){

@@ -1,4 +1,8 @@
 package com.ProyectoJava.objetos;
+import excepciones.NoHayStockException;
+import excepciones.ProductoNoExistenteException;
+import excepciones.ProductoYaExistenteException;
+
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -24,18 +28,16 @@ public class Pedido {
         this.idPedido = contadorPedidos;
     }
 
-    public void agregarProducto(int idProducto, int cantidadPedida){
+    public void agregarProducto(int idProducto, int cantidadPedida) throws ProductoNoExistenteException {
         RepositorioProducto repositorioProducto = RepositorioProducto.getInstancia();
         Producto productoPedido = repositorioProducto.buscarProductoPorId(idProducto);
         if(productoPedido == null){
-            System.out.println("No se encontro el producto agregado");
-            return;
+            throw new ProductoNoExistenteException("No existe el producto con Id: "+ idProducto);
         }
         String nombreProducto = productoPedido.getNombre();
         if(repositorioProducto.hayStock(idProducto, cantidadPedida)){
             LineaPedido unaLineaPedido = new LineaPedido(productoPedido, cantidadPedida);
             pedido.add(unaLineaPedido);
-
             System.out.println("Se agregaron " + cantidadPedida + " " + nombreProducto);
         } else {
             System.out.println("Sólo quedan " + productoPedido.getStock() + " " + nombreProducto);
@@ -52,19 +54,16 @@ public class Pedido {
 
 
 
-    public void confirmarPedido(){
-        for(LineaPedido lp : pedido){
-            lp.getProducto().descontarStock(lp.getCantidad());
-        }
+    public void asignarIdPedido() {
         contadorPedidos++;
         this.idPedido += contadorPedidos;
-        RepositorioPedidos.getInstancia().agregarPedido(this);
     }
 
     public void mostrarPedido(){
         for(LineaPedido lp : pedido){
-            System.out.println("Producto: " + lp.getProducto().getNombre() + "Cantidad: " + lp.getCantidad());
+            System.out.println("Producto: " + lp.getProducto().getNombre() + ". Cantidad: " + lp.getCantidad());
         }
         System.out.println("Costo total: " + calcularCosto());
+        System.out.println("______________________");
     }
 }
